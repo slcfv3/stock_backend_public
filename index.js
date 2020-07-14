@@ -103,7 +103,6 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
                 res2.on("end", () => {
                   body.overview = JSON.parse(body2);
                   resolve.send(body)
-                  
                   /*https.get(peerUrl, res3 => {
                     res3.setEncoding("utf8");
                     let body3 =""
