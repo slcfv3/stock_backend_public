@@ -29,7 +29,10 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let tradayChartUrl= base_url+'stable/stock/'+symbol+'/intraday-prices?token='+secret_key
     let newsUrl = base_url+'stable/stock/'+symbol+'/news/last/5?token='+secret_key
     https.get(quoteUrl, res => {
-        res.setEncoding("utf8");
+        if(res.statusCode==404)
+            resolve.status(404).send('Stock not found');
+        else{
+            res.setEncoding("utf8");
         let body = "";
         res.on("data", data => {
           body += data;
@@ -62,6 +65,8 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
             });
           });
         });
+        }
+        
       });
   })
 
@@ -74,53 +79,58 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let overviewUrl = base_url+'stable/stock/'+symbol+'/company?token='+secret_key
     let peerUrl = base_url+'stable/stock/'+symbol+'/peers?token='+secret_key
     https.get(quoteUrl, res => {
-        res.setEncoding("utf8");
-        let body = "";
-        res.on("data", data => {
-          body += data;
-          
-        });
-        res.on("end", () => {
-          body = JSON.parse(body);
-          
-          https.get(historicalChartUrl, res1 => {
-            res1.setEncoding("utf8");
-            let body1 =""
-            res1.on("data", data => {
-              body1 += data;
-              
+        if(res.statusCode==404)
+            resolve.status(404).send('Stock not found');
+        else{
+            res.setEncoding("utf8");
+            let body = "";
+            res.on("data", data => {
+            body += data;
+            
             });
-            res1.on("end", () => {
-              body.chart = JSON.parse(body1);
-              
-              https.get(overviewUrl, res2 => {
-                res2.setEncoding("utf8");
-                let body2 =""
-                res2.on("data", data => {
-                  body2 += data;
-                  
+            res.on("end", () => {
+            body = JSON.parse(body);
+            
+            https.get(historicalChartUrl, res1 => {
+                res1.setEncoding("utf8");
+                let body1 =""
+                res1.on("data", data => {
+                body1 += data;
+                
                 });
-                res2.on("end", () => {
-                  body.overview = JSON.parse(body2);
-                  resolve.send(body)
-                  /*https.get(peerUrl, res3 => {
-                    res3.setEncoding("utf8");
-                    let body3 =""
-                    res3.on("data", data => {
-                      body3 += data;
-                      //console.log(data)
+                res1.on("end", () => {
+                body.chart = JSON.parse(body1);
+                
+                https.get(overviewUrl, res2 => {
+                    res2.setEncoding("utf8");
+                    let body2 =""
+                    res2.on("data", data => {
+                    body2 += data;
+                    
                     });
-                    res3.on("end", () => {
-                      body.peers = JSON.parse(body3);
-                      //console.log(body);
-                      resolve.send(body)
+                    res2.on("end", () => {
+                    body.overview = JSON.parse(body2);
+                    resolve.send(body)
+                    /*https.get(peerUrl, res3 => {
+                        res3.setEncoding("utf8");
+                        let body3 =""
+                        res3.on("data", data => {
+                        body3 += data;
+                        //console.log(data)
+                        });
+                        res3.on("end", () => {
+                        body.peers = JSON.parse(body3);
+                        //console.log(body);
+                        resolve.send(body)
+                        });
+                    });*/
                     });
-                  });*/
                 });
-              });
+                });
             });
-          });
-        });
+            });
+            }
+        
       });
   })
 
@@ -130,17 +140,22 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let newsUrl = base_url+'stable/stock/'+symbol+'/news/last/5?token='+secret_key
     
     https.get(newsUrl, res => {
-        res.setEncoding("utf8");
-        let body = "";
-        res.on("data", data => {
-          body += data;
-          
-        });
-        res.on("end", () => {
-          body = JSON.parse(body);
-          
-          resolve.send(body)
-        });
+        if(res.statusCode==404)
+            resolve.status(404).send('Stock not found');
+        else{
+            res.setEncoding("utf8");
+            let body = "";
+            res.on("data", data => {
+            body += data;
+            
+            });
+            res.on("end", () => {
+            body = JSON.parse(body);
+            
+            resolve.send(body)
+            });
+        }
+        
       });
   })
 
@@ -153,54 +168,60 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let overviewUrl = base_url+'stable/stock/'+symbol+'/company?token='+secret_key
     let peerUrl = base_url+'stable/stock/'+symbol+'/peers?token='+secret_key
     https.get(quoteUrl, res => {
-        res.setEncoding("utf8");
-        let body = "";
-        res.on("data", data => {
-          body += data;
-          
-        });
-        res.on("end", () => {
-          body = JSON.parse(body);
-          
-          https.get(historicalChartUrl, res1 => {
-            res1.setEncoding("utf8");
-            let body1 =""
-            res1.on("data", data => {
-              body1 += data;
-              
+        if(res.statusCode==404)
+            resolve.status(404).send('Stock not found');
+        else{
+            res.setEncoding("utf8");
+            let body = "";
+            res.on("data", data => {
+            body += data;
+            
             });
-            res1.on("end", () => {
-              body.chart = JSON.parse(body1);
-             
-              https.get(overviewUrl, res2 => {
-                res2.setEncoding("utf8");
-                let body2 =""
-                res2.on("data", data => {
-                  body2 += data;
-                  
+            res.on("end", () => {
+            body = JSON.parse(body);
+            console.log('quote normal'+ historicalChartUrl)
+            https.get(historicalChartUrl, res1 => {
+                res1.setEncoding("utf8");
+                let body1 =""
+                res1.on("data", data => {
+                body1 += data;
+                
                 });
-                res2.on("end", () => {
-                  body.overview = JSON.parse(body2);
-                  resolve.send(body)
-                  //console.log(body);
-                  /*https.get(peerUrl, res3 => {
-                    res3.setEncoding("utf8");
-                    let body3 =""
-                    res3.on("data", data => {
-                      body3 += data;
-                      //console.log(data)
+                res1.on("end", () => {
+                    body.chart = JSON.parse(body1);
+                    console.log('chart normal')
+                    https.get(overviewUrl, res2 => {
+                    res2.setEncoding("utf8");
+                    let body2 =""
+                    res2.on("data", data => {
+                        body2 += data;
+                        
                     });
-                    res3.on("end", () => {
-                      body.peers = JSON.parse(body3);
-                      //console.log(body);
-                      resolve.send(body)
+                    res2.on("end", () => {
+                        body.overview = JSON.parse(body2);
+                        console.log('overview normal')
+                        resolve.send(body)
+                        //console.log(body);
+                        /*https.get(peerUrl, res3 => {
+                        res3.setEncoding("utf8");
+                        let body3 =""
+                        res3.on("data", data => {
+                            body3 += data;
+                            //console.log(data)
+                        });
+                        res3.on("end", () => {
+                            body.peers = JSON.parse(body3);
+                            //console.log(body);
+                            resolve.send(body)
+                        });
+                        });*/
                     });
-                  });*/
+                    });
                 });
-              });
+                });
             });
-          });
-        });
+            }
+        
       });
   })
 
