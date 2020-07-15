@@ -1,2 +1,2 @@
-exports.base_url = "https://cloud.iexapis.com/"
-exports.secret_key = "sk_b7a1ed14a20b43d48a0019aeed439a94"
+exports.base_url = "https://sandbox.iexapis.com/"
+exports.secret_key = "Tsk_b0e0e79a24d84c2899d7ee58ca218715"

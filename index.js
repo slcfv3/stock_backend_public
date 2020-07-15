@@ -78,6 +78,8 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let historicalChartUrl = base_url+'stable/stock/'+symbol+'/chart/'+range+'?token='+secret_key
     let overviewUrl = base_url+'stable/stock/'+symbol+'/company?token='+secret_key
     let peerUrl = base_url+'stable/stock/'+symbol+'/peers?token='+secret_key
+    let tradayChartUrl= base_url+'stable/stock/'+symbol+'/intraday-prices?token='+secret_key
+    let newsUrl = base_url+'stable/stock/'+symbol+'/news/last/5?token='+secret_key
     https.get(quoteUrl, res => {
         if(res.statusCode==404)
             resolve.status(404).send('Stock not found');
@@ -91,43 +93,67 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
             res.on("end", () => {
             body = JSON.parse(body);
             
-            https.get(historicalChartUrl, res1 => {
+            https.get(tradayChartUrl, res1 => {
                 res1.setEncoding("utf8");
                 let body1 =""
                 res1.on("data", data => {
-                body1 += data;
-                
+                  body1 += data;
                 });
                 res1.on("end", () => {
-                body.chart = JSON.parse(body1);
-                
-                https.get(overviewUrl, res2 => {
+                  body.chart = JSON.parse(body1);
+                  
+                  https.get(newsUrl, res2 => {
                     res2.setEncoding("utf8");
                     let body2 =""
                     res2.on("data", data => {
-                    body2 += data;
-                    
+                      body2 += data;
+                      
                     });
                     res2.on("end", () => {
-                    body.overview = JSON.parse(body2);
-                    resolve.send(body)
-                    /*https.get(peerUrl, res3 => {
-                        res3.setEncoding("utf8");
-                        let body3 =""
-                        res3.on("data", data => {
-                        body3 += data;
-                        //console.log(data)
-                        });
-                        res3.on("end", () => {
-                        body.peers = JSON.parse(body3);
-                        //console.log(body);
-                        resolve.send(body)
-                        });
-                    });*/
+                      body.news = JSON.parse(body2);
+                     
+                        https.get(historicalChartUrl, res3 => {
+                            res3.setEncoding("utf8");
+                            let body3 =""
+                            res3.on("data", data => {
+                                body3 += data;
+                            
+                            });
+                            res3.on("end", () => {
+                                body.hischart = JSON.parse(body3);
+                                
+                                https.get(overviewUrl, res4 => {
+                                    res4.setEncoding("utf8");
+                                    let body4 =""
+                                    res4.on("data", data => {
+                                    body4 += data;
+                                    
+                                    });
+                                    res4.on("end", () => {
+                                    body.overview = JSON.parse(body4);
+                                    
+                                    https.get(peerUrl, res5 => {
+                                        res5.setEncoding("utf8");
+                                        let body5 =""
+                                        res5.on("data", data => {
+                                        body5 += data;
+                                        
+                                        });
+                                        res5.on("end", () => {
+                                        body.peers = JSON.parse(body5);
+                                        
+                                        resolve.send(body)
+                                        });
+                                    });
+                                    });
+                                });
+                            });
                     });
+                    });
+                  });
                 });
-                });
-            });
+              });
+            
             });
             }
         
@@ -167,6 +193,7 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
     let historicalChartUrl = base_url+'stable/stock/'+symbol+'/chart/'+range+'?token='+secret_key
     let overviewUrl = base_url+'stable/stock/'+symbol+'/company?token='+secret_key
     let peerUrl = base_url+'stable/stock/'+symbol+'/peers?token='+secret_key
+    let newsUrl = base_url+'stable/stock/'+symbol+'/news/last/5?token='+secret_key
     https.get(quoteUrl, res => {
         if(res.statusCode==404)
             resolve.status(404).send('Stock not found');
@@ -179,7 +206,7 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
             });
             res.on("end", () => {
             body = JSON.parse(body);
-            console.log('quote normal'+ historicalChartUrl)
+            //console.log('quote normal'+ historicalChartUrl)
             https.get(historicalChartUrl, res1 => {
                 res1.setEncoding("utf8");
                 let body1 =""
@@ -189,7 +216,7 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
                 });
                 res1.on("end", () => {
                     body.chart = JSON.parse(body1);
-                    console.log('chart normal')
+                    //console.log('chart normal')
                     https.get(overviewUrl, res2 => {
                     res2.setEncoding("utf8");
                     let body2 =""
@@ -199,22 +226,37 @@ app.get("/tradehotdetails/:request", function (req, resolve) {
                     });
                     res2.on("end", () => {
                         body.overview = JSON.parse(body2);
-                        console.log('overview normal')
-                        resolve.send(body)
-                        //console.log(body);
-                        /*https.get(peerUrl, res3 => {
+                        //console.log('overview normal')
+                        
+                        
+                        https.get(peerUrl, res3 => {
                         res3.setEncoding("utf8");
                         let body3 =""
                         res3.on("data", data => {
                             body3 += data;
-                            //console.log(data)
+                            
                         });
                         res3.on("end", () => {
                             body.peers = JSON.parse(body3);
-                            //console.log(body);
-                            resolve.send(body)
+                            
+                            https.get(newsUrl, res4 => {
+                                
+                                res4.setEncoding("utf8");
+                                let body4 = "";
+                                res4.on("data", data => {
+                                body4 += data;
+                                
+                                });
+                                res4.on("end", () => {
+                                body.news = JSON.parse(body4);
+                                
+                                resolve.send(body)
+                                });
+                                
+                                
+                              });
                         });
-                        });*/
+                        });
                     });
                     });
                 });
